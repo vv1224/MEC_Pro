@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd ">
+
+    <!-- shiro -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/index.jsp"/>
+        <!-- 配置过滤地址链-->
+        <property name="filterChainDefinitions">
+            <value>
+                #anon是匿名过滤器，用户不必登录即可访问的地址，必须放在其他过滤器前面
+                #myAuthc是自定义认证过滤器，对用户的登陆信息进行认证
+
+            </value>
+        </property>
+    </bean>
+    <!-- 自定义的认证过滤器 -->
+    <!--<bean id="myAuthc" class="com.yada.wechatbank.shiro.MyAuthcFilter"/>
+
+    <bean id="myRealm" class="com.yada.wechatbank.shiro.MyRealm">
+        <property name="timeout" value="1800000"/>
+    </bean>-->
+
+    <!-- shiro安全核心 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!-- 配置验证用户的realm，当有多个验证realm时有属性realms -->
+        <!--<property name="realm" ref="myRealm"/>-->
+        <!-- 配置缓存管理 -->
+        <property name="rememberMeManager" ref="cookieRememberMeManager"/>
+    </bean>
+
+    <bean id="cookieRememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="simpleCookie"/>
+    </bean>
+
+    <bean id="simpleCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <property name="name" value="ourRememberMe"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="86400"/>
+    </bean>
+</beans>
